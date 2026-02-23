@@ -1,22 +1,32 @@
-# Data Engineering Challenge - Stori
+# Challenge Data Engineering 
 
-Este proyecto consiste en una solución de ingeniería de datos diseñada para ingerir, transformar y almacenar datos provenientes de una API de fútbol y un bucket de Amazon S3 de manera escalable y profesional.
+Pipeline de datos (ETL) diseñado para procesar información de partidos y estadios mediante la integración de APIs externas, Amazon S3 y PostgreSQL.
 
-## Arquitectura de la Solución
-El proceso sigue un flujo de pipeline de datos modular:
-1. [cite_start]**Ingesta:** Recolección incremental de datos de partidos vía API y metadatos de estadios desde S3[cite: 4, 5].
-2. [cite_start]**Validación:** Verificación de presencia de datos en S3 antes de la ejecución (Bonus)[cite: 12].
-3. [cite_start]**Transformación:** Enriquecimiento de datos, cálculo de métricas (total de goles) y normalización de campos[cite: 6, 7].
-4. [cite_start]**Carga:** Almacenamiento de los datos transformados en una base de datos PostgreSQL local[cite: 5].
-5. [cite_start]**Monitoreo:** Notificaciones automáticas a Slack en caso de fallos en el proceso (Bonus)[cite: 13].
+## Flujo del Proyecto
+1. **Generación:** Datos de una API abierta llamada jsonplaceholder
+2. **Ingesta:** Código en Python para hacer el request y la libreria boto3 para S3 
+2. **Resiliencia:** Manejo de errores y validación de archivos en S3. En ausencia de credenciales de AWS, el sistema utiliza un respaldo de datos locales para asegurar la continuidad del pipeline.
+3. **Transformación:** Cruce de datasets (Merge), cálculo de métricas de desempeño (goles totales) y normalización de esquemas.
+4. **Carga:** Ingesta automatizada en base de datos PostgreSQL.
+5. **Notificaciones:** Integración con Slack para alertar sobre fallos en el proceso. (Al no contar con una cuenta en Slack el mensaje es simulado)
 
-## Requisitos Previos
-* Python 3.x
-* PostgreSQL instalado localmente
-* [cite_start]Git [cite: 18]
+## Requisitos
+* Python 3.10+
+* PostgreSQL
+* Boto3, Pandas, SQLAlchemy, requests, etc.
 
-## Instalación y Ejecución Local
+## Ejecución
 1. Clonar el repositorio:
    ```bash
    git clone [https://github.com/rochoalazar/challenge.git](https://github.com/rochoalazar/challenge.git)
    cd challenge
+Instalar dependencias:
+
+   Bash
+   pip install -r requirements.txt
+   Ejecutar el pipeline:
+
+   Bash
+   python main.py
+
+---
