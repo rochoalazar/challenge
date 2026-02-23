@@ -42,3 +42,4 @@ if __name__ == "__main__":
     transformer = DataTransformer()
     final_df = transformer.enrich_football_data(df_api, df_s3)
     print(final_df)
+    
