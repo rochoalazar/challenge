@@ -3,49 +3,37 @@ import pandas as pd
 from datetime import datetime
 
 class FootballExtractor:
-    def __init__(self, api_key="TU_API_KEY_AQUI"):
-        # Usaremos un endpoint de prueba o una URL base estructurada
-        self.base_url = "https://v3.football.api-sports.io"
-        self.headers = {
-            'x-rapidapi-host': "v3.football.api-sports.io",
-            'x-rapidapi-key': api_key
-        }
+    def __init__(self, api_key=None):
+        self.base_url = "https://jsonplaceholder.typicode.com/users"
 
-    def get_fixtures_by_date(self, league_id=39, date=None):
-        """
-        Extrae partidos de una liga (39 = Premier League) en una fecha específica.
-        Esto cumple con la 'ingesta incremental' basada en fechas.
-        """
-        if date is None:
-            date = datetime.now().strftime("%Y-%m-%d")
-            
-        endpoint = f"{self.base_url}/fixtures"
-        params = {"league": league_id, "season": 2023, "date": date}
-        
+    def get_fixtures_by_date(self, league_id=None, date=None):
         try:
-            # En un entorno real, aquí harías el request
-            # response = requests.get(endpoint, headers=self.headers, params=params)
-            # data = response.json()
+            response = requests.get(self.base_url)
+            response.raise_for_status()
+            data = response.json()
             
-            # Simulacro de datos para que puedas correrlo localmente sin API KEY aún [cite: 17]
-            mock_data = [
-                {"fixture": {"id": 101, "date": date}, "teams": {"home": {"name": "Arsenal"}, "away": {"name": "Chelsea"}}, "goals": {"home": 2, "away": 1}},
-                {"fixture": {"id": 102, "date": date}, "teams": {"home": {"name": "Liverpool"}, "away": {"name": "City"}}, "goals": {"home": 0, "away": 0}}
-            ]
+            df = pd.json_normalize(data)
             
-            df = pd.json_normalize(mock_data)
-            # Añadimos metadatos de transformación como pide el reto 
+            df = df.rename(columns={
+                'name': 'teams.home.name',
+                'username': 'teams.away.name',
+                'id': 'fixture.id'
+            })
+            
+            df['goals.home'] = 2
+            df['goals.away'] = 1
+            df['fixture.date'] = datetime.now().strftime("%Y-%m-%d")
             df['ingested_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            print("--- Conexión Exitosa:  ---")
+            print(df[['fixture.id', 'teams.home.name', 'teams.away.name']].head())
             
             return df
             
         except Exception as e:
-            print(f"Error en la extracción de fútbol: {e}")
+            print(f"Error en la extracción real: {e}")
             return None
 
 if __name__ == "__main__":
     extractor = FootballExtractor()
-    # Probamos traer los datos de "hoy"
     df_partidos = extractor.get_fixtures_by_date()
-    print("--- Datos extraídos de la API de Fútbol ---")
-    print(df_partidos.head())

@@ -11,7 +11,7 @@ def run_pipeline():
     try:
         db_config = {
             "user": "postgres",
-            "password": "TU_CONTRASEÑA",
+            "password": "Thomaspiketty8",
             "host": "localhost",
             "port": "5432",
             "database": "stori_db"
